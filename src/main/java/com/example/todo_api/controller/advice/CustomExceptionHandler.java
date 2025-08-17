@@ -3,6 +3,7 @@ package com.example.todo_api.controller.advice;
 import com.example.todo_api.service.task.TaskEntityNotFoundException;
 import com.example.todoapi.model.BadRequestError;
 import com.example.todoapi.model.ResourceNotFoundError;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -31,6 +32,14 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatusCode status,
             WebRequest request
     ) {
+        var error = BadRequestErrorCreator.from(ex);
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<BadRequestError> handlerConstraintViolationException(
+            ConstraintViolationException ex
+    ){
         var error = BadRequestErrorCreator.from(ex);
         return ResponseEntity.badRequest().body(error);
     }
